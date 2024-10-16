@@ -85,7 +85,8 @@ def protected():
         return jsonify({ "message": "Token is invalid"})
 
 
-@app.route('/user', methods=['GET'])
+
+@app.route('/login_user', methods=['GET'])
 def protected():
     token = request.headers.get("Authorization")
     if not token:
@@ -105,7 +106,26 @@ def protected():
     except jwt.InvalidTokenError:
         return jsonify({ "message": "Token is invalid"})
 
+ 
+@app.route('/user', methods=['GET'])
+def protected():
+    token = request.headers.get("Authorization")
+    if not token:
+        return jsonify({ "message": "Token is missing"})
 
+    try:
+        token =token.split()[1]
+        if token:
+            decoded_token =  jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+            user_id=decoded_token["user_id"]
+
+            user =User.query.get(user_id)
+
+            return jsonify({ "message": f"Welcome , {user.username}", "user_id": user.id})
+        else:
+            return jsonify({ "message": "Token is invalid"})
+    except jwt.InvalidTokenError:
+        return jsonify({ "message": "Token is invalid"})
 
 
 if __name__ == '__main__':
