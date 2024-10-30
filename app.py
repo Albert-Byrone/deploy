@@ -64,53 +64,56 @@ def login():
     token = jwt.encode({"user_id": user.id, "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=1)}, app.config["SECRET_KEY"], algorithm="HS256")
     return jsonify({ "token": token})
 
-@app.route('/protected', methods=['GET'])
-def protected():
-    token = request.headers.get("Authorization")
-    if not token:
-        return jsonify({ "message": "Token is missing"})
+# @app.route('/protected', methods=['GET'])
+# def protected():
+#     token = request.headers.get("Authorization")
+#     if not token:
+#         return jsonify({ "message": "Token is missing"})
 
-    try:
-        token =token.split()[1]
-        if token:
-            decoded_token =  jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
-            user_id=decoded_token["user_id"]
+#     try:
+#         token =token.split()[1]
+#         if token:
+#             decoded_token =  jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+#             user_id=decoded_token["user_id"]
 
-            user =User.query.get(user_id)
+#             user =User.query.get(user_id)
 
-            return jsonify({ "message": f"Welcome , {user.username}", "user_id": user.id})
-        else:
-            return jsonify({ "message": "Token is invalid"})
-    except jwt.InvalidTokenError:
-        return jsonify({ "message": "Token is invalid"})
+#             return jsonify({ "message": f"Welcome , {user.username}", "user_id": user.id})
+#         else:
+#             return jsonify({ "message": "Token is invalid"})
+#     except jwt.InvalidTokenError:
+#         return jsonify({ "message": "Token is invalid"})
 
 
 
-@app.route('/login_user', methods=['GET'])
-def protected():
-    token = request.headers.get("Authorization")
-    if not token:
-        return jsonify({ "message": "Token is missing"})
+# @app.route('/login_user', methods=['GET'])
+# def protected():
+#     token = request.headers.get("Authorization")
+#     if not token:
+#         return jsonify({ "message": "Token is missing"})
 
-    try:
-        token =token.split()[1]
-        if token:
-            decoded_token =  jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
-            user_id=decoded_token["user_id"]
+#     try:
+#         token =token.split()[1]
+#         if token:
+#             decoded_token =  jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+#             user_id=decoded_token["user_id"]
 
-            user =User.query.get(user_id)
+#             user =User.query.get(user_id)
 
-            return jsonify({ "message": f"Welcome , {user.username}", "user_id": user.id})
-        else:
-            return jsonify({ "message": "Token is invalid"})
-    except jwt.InvalidTokenError:
-        return jsonify({ "message": "Token is invalid"})
+#             return jsonify({ "message": f"Welcome , {user.username}", "user_id": user.id})
+#         else:
+#             return jsonify({ "message": "Token is invalid"})
+#     except jwt.InvalidTokenError:
+#         return jsonify({ "message": "Token is invalid"})
 
  
-@app.route('/user', methods=['GET'])
+#@@app.route('/user', methods=['GET'])
 def protected():
+    import logging
+    logging.basicConfig(level=logging.INFO)
     token = request.headers.get("Authorization")
     if not token:
+        logging.info('Token is missing')
         return jsonify({ "message": "Token is missing"})
 
     try:
@@ -121,13 +124,14 @@ def protected():
 
             user =User.query.get(user_id)
 
+            logging.info(f'User {user.username} logged in successfully')
             return jsonify({ "message": f"Welcome , {user.username}", "user_id": user.id})
         else:
+            logging.info('Token is invalid')
             return jsonify({ "message": "Token is invalid"})
     except jwt.InvalidTokenError:
+        logging.error('Invalid token error')
         return jsonify({ "message": "Token is invalid"})
-
-
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
 
@@ -245,3 +249,21 @@ if __name__ == '__main__':
 #     - The JWT contains certain information:
 #     - user-id
 #     - time you want the JWT to be expire
+
+
+# Secondary Sysystem
+
+
+
+# Student  --should not log in
+# class
+# teacher
+# parent
+
+
+# Parent---login -- see the students information(grades) --  my student(all related)
+
+
+# Teacher -- teacher --update or add students information(classs- students(parent))
+
+# Term 2 graded(save instance - send notification to the parent )
